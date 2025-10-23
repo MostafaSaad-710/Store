@@ -1,0 +1,44 @@
+﻿using Store.Domain.Contracts;
+using Store.Domain.Entities;
+using Store.Persistence.Data.Contexts;
+using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Store.Persistence
+{
+    internal class UnitOfWork (StoreDbContext _context): IUnitOfWork
+    {
+        //private Dictionary<string, object> _repositories = new Dictionary<string, object>();
+        private ConcurrentDictionary<string, object> _repositories = new ConcurrentDictionary<string, object>();
+
+
+
+        //public IGenericRepository<TKey, TEntity> GetRepository<TKey, TEntity>() where TEntity : BaseEntity<TKey>
+        //{
+        //    var type = typeof(TEntity).Name;
+        //
+        //    if (!_repositories.ContainsKey(type))
+        //    {
+        //        var repository = new GenericRepository<TKey, TEntity>(_context);
+        //        _repositories.Add(type, repository);
+        //    }
+        //
+        //    return (IGenericRepository<TKey, TEntity>) _repositories[type];
+        //}
+
+        public IGenericRepository<Tkey, TEntity> GetRepository<Tkey, TEntity>() where TEntity : BaseEntity<Tkey>
+        {
+             return (IGenericRepository<Tkey, TEntity>)_repositories.GetOrAdd(typeof(TEntity).Name,new GenericRepository<Tkey, TEntity>(_context));
+
+        }
+
+        public async Task<int> SaveChangesAsync()
+        {
+            return await _context.SaveChangesAsync();
+        }
+    }
+}
