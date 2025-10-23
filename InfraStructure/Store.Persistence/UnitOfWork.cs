@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Store.Persistence
 {
-    internal class UnitOfWork (StoreDbContext _context): IUnitOfWork
+    public class UnitOfWork (StoreDbContext _context): IUnitOfWork
     {
         //private Dictionary<string, object> _repositories = new Dictionary<string, object>();
         private ConcurrentDictionary<string, object> _repositories = new ConcurrentDictionary<string, object>();
