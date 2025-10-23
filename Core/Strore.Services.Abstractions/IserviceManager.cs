@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Strore.Services.Abstractions
 {
-    public interface IserviceManager
+    public interface IServiceManager
     {
         IproductService productService { get;}
 
