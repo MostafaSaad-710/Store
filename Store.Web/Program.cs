@@ -1,9 +1,15 @@
 
+using Microsoft.EntityFrameworkCore;
+using Store.Domain.Contracts;
+using Store.Persistence;
+using Store.Persistence.Data.Contexts;
+using System.Threading.Tasks;
+
 namespace Store.Web
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
 
@@ -14,7 +20,24 @@ namespace Store.Web
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
+         
+            builder.Services.AddDbContext<StoreDbContext>(options =>
+            {
+                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+
+            });
+
+            builder.Services.AddScoped<IDbInitializer, DbInitializer>();
+
             var app = builder.Build();
+
+            #region Inisialize Db
+            // We Call 'InitializeAsync' every time i run app so i call it in program
+            using var scope = app.Services.CreateScope(); // This function creates an object from IServiceScope, which allows me to access any scoped service at runtime.
+            var dbInitialize = scope.ServiceProvider.GetRequiredService<IDbInitializer>(); // Ask CLR To Create Object From IDbInitializer
+            await dbInitialize.InitializeAsync();
+
+            #endregion
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
