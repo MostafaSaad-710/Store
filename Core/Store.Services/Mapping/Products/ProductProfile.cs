@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.Extensions.Configuration;
 using Store.Domain.Entities.Products;
 using Store.Shared.Dtos.Products;
 using System;
@@ -11,11 +12,13 @@ namespace Store.Services.Mapping.Products
 {
     public class ProductProfile : Profile
     {
-        public ProductProfile() 
+        public ProductProfile(IConfiguration configuration)
         {
             CreateMap<Product, ProductResponse>()
                 .ForMember(D => D.Brand, O => O.MapFrom(S => S.Brand.Name))
                 .ForMember(D => D.Type, O => O.MapFrom(S => S.Type.Name))
+                //.ForMember(D => D.PictureUrl , o => o.MapFrom(s => $"{configuration["BaseUrl"]}/{s.PictureUrl}")))
+                .ForMember(D => D.PictureUrl , o => o.MapFrom(new ProductPictureUrlResolver(configuration)))
                 ;
 
             CreateMap<ProductBrand, BrandTypeResponse>();

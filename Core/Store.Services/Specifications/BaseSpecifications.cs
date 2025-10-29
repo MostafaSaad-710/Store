@@ -1,0 +1,33 @@
+﻿using Store.Domain.Contracts;
+using Store.Domain.Entities;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Store.Services.Specifications
+{
+    public class BaseSpecifications<Tkey, TEntity> : Ispecifications<Tkey, TEntity> where TEntity : BaseEntity<Tkey>
+    {
+        public List<Expression<Func<TEntity, object>>> Includes { get ; set; } = new List<Expression<Func<TEntity, object>>> ();
+        public Expression<Func<TEntity, bool>>? Criteria { get; set ; }
+        public Expression<Func<TEntity, object>>? OrderBy { get; set; }
+        public Expression<Func<TEntity, object>>? OrderByDescending { get; set; }
+
+        public BaseSpecifications(Expression<Func<TEntity, bool>>? expression)
+        {
+            Criteria = expression;
+        }
+
+        public void AddOrderBy (Expression<Func<TEntity, object>>? expression)
+        {
+            OrderBy = expression;
+        }
+        public void AddOrderByDescending(Expression<Func<TEntity, object>>? expression)
+        {
+            OrderByDescending = expression;
+        }
+    }
+}

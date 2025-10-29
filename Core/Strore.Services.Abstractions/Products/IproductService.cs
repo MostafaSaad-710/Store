@@ -9,7 +9,7 @@ namespace Strore.Services.Abstractions.Products
 {
     public interface IproductService
     {
-        Task<IEnumerable<ProductResponse>> GetAllProductsAsync();
+        Task<IEnumerable<ProductResponse>> GetAllProductsAsync(int? brandId, int? TypeId , string? sort , string? search);
         Task<ProductResponse> GetProductByIdAsync(int id);
         Task<IEnumerable<BrandTypeResponse>> GetAllBrandsAsync();
         Task<IEnumerable<BrandTypeResponse>> GetAllTyepsAsync();
