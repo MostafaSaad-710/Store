@@ -35,6 +35,11 @@ namespace Store.Persistence
                 query = query.OrderByDescending(spec.OrderByDescending);
             }
 
+            if(spec.IsPagination)
+            {
+                query = query.Skip(spec.Skip).Take(spec.Take);
+            }
+
                 //_context.Products.where(p => p.id = 12).inclode(p => p.Brand)
                 //_context.Products.where(p => p.id = 12).inclode(p => p.Brand).include(p => p.Type)
                 query = spec.Includes.Aggregate(query, (query, IncludeExpression) => query.Include(IncludeExpression));

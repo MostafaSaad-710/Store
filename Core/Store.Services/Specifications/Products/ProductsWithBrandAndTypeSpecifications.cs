@@ -1,4 +1,6 @@
-﻿using Store.Domain.Entities.Products;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Store.Domain.Entities.Products;
+using Store.Shared.Dtos.Products;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -18,21 +20,24 @@ namespace Store.Services.Specifications.Products
 
             ApplyInclude();
         }
-        public ProductsWithBrandAndTypeSpecifications(int? brandId, int? TypeId, string? sort , string? search) : base
+        public ProductsWithBrandAndTypeSpecifications(ProductQueryParameters parameters) : base
             (
                    p =>
-                   (!brandId.HasValue || p.BrandId == brandId)
+                   (!parameters.BrandId.HasValue || p.BrandId == parameters.BrandId)
                    &&
-                   (!TypeId.HasValue || p.TypeId == TypeId)
+                   (!parameters.TypeId.HasValue || p.TypeId == parameters.TypeId)
                    &&
-                   ( string.IsNullOrEmpty(search) || p.Name.ToLower().Contains(search.ToLower()))
+                   ( string.IsNullOrEmpty(parameters.Search) || p.Name.ToLower().Contains(parameters.Search.ToLower()))
 
             
             )
         {
             //Includes.Add(p => p.Brand);
             //Includes.Add(p => p.Type);
-            ApplySorting(sort);
+
+            ApplyPagination(parameters.PageIndex, parameters.PageSize);
+
+            ApplySorting(parameters.Sort);
 
             ApplyInclude();
 
