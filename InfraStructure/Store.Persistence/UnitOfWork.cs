@@ -1,6 +1,7 @@
 ﻿using Store.Domain.Contracts;
 using Store.Domain.Entities;
 using Store.Persistence.Data.Contexts;
+using Store.Persistence.Repositories;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;

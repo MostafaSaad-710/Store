@@ -13,10 +13,16 @@ namespace Store.Presentation
     [Route("api/[controller]")]
     public class ProductsController(IServiceManager _serviceManager) : ControllerBase
     {
+
+        //Priceasc
+        //Pricedesc
+        //nameasc
+
+
         [HttpGet]// Get//: baseUrl/api/Products
-        public async Task<IActionResult> GetAllProducts()
+        public async Task<IActionResult> GetAllProducts(int? brandId, int? TypeId ,string? sort, string? search)
         {
-            var result = await _serviceManager.productService.GetAllProductsAsync();
+            var result = await _serviceManager.productService.GetAllProductsAsync(brandId, TypeId , sort, search);
             if (result is null) return BadRequest(); // 400
             return Ok(result); //200
         }

@@ -9,7 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Store.Persistence
+namespace Store.Persistence.Repositories
 {
     public class GenericRepository<Tkey, TEntity>(StoreDbContext _context) : IGenericRepository<Tkey, TEntity> where TEntity : BaseEntity<Tkey>
     {
@@ -20,7 +20,7 @@ namespace Store.Persistence
             if(typeof(TEntity) == typeof(Product))
             {
                 return changeTracker ?
-                await _context.Products.Include(p => p.Brand).Include(p => p.Type).ToListAsync() as IEnumerable<TEntity>
+                await _context.Products.Include(p => p.Brand).Include(p => p.Type).OrderBy(p => p.Price).ToListAsync() as IEnumerable<TEntity>
                 : await _context.Products.Include(p => p.Brand).Include(p => p.Type).AsNoTracking().ToListAsync() as IEnumerable<TEntity>;
             }
 
@@ -33,7 +33,8 @@ namespace Store.Persistence
         {
             if (typeof(TEntity) == typeof(Product))
             {
-                return await _context.Products.Include(p => p.Brand).Include(p => p.Type).FirstOrDefaultAsync( p => p.Id == key as int?) as TEntity;
+                //return await _context.Products.Include(p => p.Brand).Include(p => p.Type).FirstOrDefaultAsync( p => p.Id == key as int?) as TEntity;
+                return await _context.Products.Include(p => p.Brand).Include(p => p.Type).Where(p => p.Id == key as int?).FirstOrDefaultAsync() as TEntity;
 
             }
             return await _context.Set<TEntity>().FindAsync(key);
@@ -49,6 +50,21 @@ namespace Store.Persistence
         public void Delete(TEntity entity)
         {
             _context.Remove(entity);
+        }
+
+        public async Task<IEnumerable<TEntity>> GetAllAsync(Ispecifications<Tkey, TEntity> spec, bool changeTracker = false)
+        {
+            // return await SpecificationsEvaluator.GetQuery(_context.Set<TEntity>() , spec).ToListAsync();
+            return await ApplySpecifications(spec).ToListAsync();
+        }
+
+        public async Task<TEntity?> GetAsync(Ispecifications<Tkey, TEntity> spec)
+        {
+            return await ApplySpecifications(spec).FirstOrDefaultAsync();
+        }
+        private IQueryable<TEntity> ApplySpecifications(Ispecifications<Tkey, TEntity> spec)
+        {
+            return SpecificationsEvaluator.GetQuery(_context.Set<TEntity>(), spec);
         }
     }
 }
