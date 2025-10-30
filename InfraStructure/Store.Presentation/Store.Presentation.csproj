@@ -13,6 +13,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Core\Store.Services\Store.Services.csproj" />
     <ProjectReference Include="..\..\Core\Strore.Services.Abstractions\Strore.Services.Abstractions.csproj" />
+    <ProjectReference Include="..\Store.Persistence\Store.Persistence.csproj" />
   </ItemGroup>
 
 </Project>

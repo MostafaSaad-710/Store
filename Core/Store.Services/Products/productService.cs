@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
 using Store.Domain.Contracts;
 using Store.Domain.Entities.Products;
+using Store.Domain.Exeptions.NotFound;
 using Store.Services.Specifications;
 using Store.Services.Specifications.Products;
+using Store.Shared;
 using Store.Shared.Dtos.Products;
 using Strore.Services.Abstractions.Products;
 using System;
@@ -16,7 +18,7 @@ namespace Store.Services.Products
     public class productService(IUnitOfWork _unitOfWork , IMapper _mapper) : IproductService
     {
 
-        public async Task<IEnumerable<ProductResponse>> GetAllProductsAsync(ProductQueryParameters parameters)
+        public async Task<PaginationResponse<ProductResponse>> GetAllProductsAsync(ProductQueryParameters parameters)
         {
 
             //var spec = new BaseSpecifications<int, Product>(null);
@@ -24,15 +26,25 @@ namespace Store.Services.Products
             //spec.Includes.Add(p => p.Type);
 
             var spec = new ProductsWithBrandAndTypeSpecifications(parameters);
+
             var product = await _unitOfWork.GetRepository<int, Product>().GetAllAsync(spec);
+
             var result = _mapper.Map<IEnumerable<ProductResponse>>(product);
-            return result;
+
+
+            var specCount = new ProductsCountSpecifications(parameters);
+            var count = await _unitOfWork.GetRepository<int,Product>().CountAsync(specCount);
+
+            return new PaginationResponse<ProductResponse>(parameters.PageIndex,parameters.PageSize, count, result);
         }
         public async Task<ProductResponse> GetProductByIdAsync(int id)
         {
             var spec = new ProductsWithBrandAndTypeSpecifications(id);
 
             var product = await _unitOfWork.GetRepository<int, Product>().GetAsync(spec);
+
+            if (product is null) throw new ProductNotFoundException(id);
+
             var result = _mapper.Map<ProductResponse>(product);
             return result;
         }
