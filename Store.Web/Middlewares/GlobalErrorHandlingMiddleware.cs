@@ -38,6 +38,7 @@ namespace Store.Web.Middlewares
                 context.Response.StatusCode = ex switch
                 {
                     DirectoryNotFoundException => StatusCodes.Status404NotFound,
+                    BadHttpRequestException => StatusCodes.Status400BadRequest,
                     _ => StatusCodes.Status500InternalServerError
                 };
 

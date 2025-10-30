@@ -1,4 +1,5 @@
-﻿using Strore.Services.Abstractions.Products;
+﻿using Strore.Services.Abstractions.Baskets;
+using Strore.Services.Abstractions.Products;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,6 +11,7 @@ namespace Strore.Services.Abstractions
     public interface IServiceManager
     {
         IproductService productService { get;}
+        IBascketServices  BascketServices { get; }
 
     }
 }
